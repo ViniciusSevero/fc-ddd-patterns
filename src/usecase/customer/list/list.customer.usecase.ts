@@ -9,7 +9,7 @@ export default class ListCustomerUseCase {
     }
 
     async execute(input: InputListCutomerDto): Promise<OutputListCustomerDto> {
-        const output =  await this.customerRepository.findAll()
+        const output = await this.customerRepository.findAll()
         return {
             customers: output.map(customer => {
                 return {
