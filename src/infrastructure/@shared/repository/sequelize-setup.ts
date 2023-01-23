@@ -11,16 +11,16 @@ export function setupSequelize(options: SequelizeOptions = {}) {
 
     let _sequelize: Sequelize;
 
-    beforeAll(() => _sequelize = new Sequelize({
-        ...sequelizeOptions,
-        ...options,
-    }));
-
     beforeEach(async () => {
-        await _sequelize.sync({ force: true });
+        _sequelize = new Sequelize({
+            ...sequelizeOptions,
+            ...options,
+        })
+
+        await _sequelize.sync();
     });
 
-    afterAll(async () => {
+    afterEach(async () => {
         await _sequelize.close()
     });
 
@@ -30,5 +30,3 @@ export function setupSequelize(options: SequelizeOptions = {}) {
         },
     };
 };
-
-// const sequelize = setupSequelize();
