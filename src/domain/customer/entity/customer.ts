@@ -1,28 +1,38 @@
+import Entity from "../../@shared/entity/entity.abstract";
 import EventDispatcherFactory from "../../@shared/event/event-dispatcher.factory";
+import NotificationError from "../../@shared/notification/notification.error";
 import CustomerAddressChangedEvent from "../event/customer-address-changed.event";
 import CustomerCreatedEvent from "../event/customer-created.event";
 import Address from "../value-object/address";
 
-export default class Customer {
-  private _id: string;
+export default class Customer extends Entity {
   private _name: string = "";
   private _address!: Address;
   private _active: boolean = false;
   private _rewardPoints: number = 0;
 
   constructor(id: string, name: string) {
-    this._id = id;
+    super(id)
     this._name = name;
     this.validate();
     this.notifyWhenCustomerIsCreated()
   }
 
   validate() {
-    if (this._id.length === 0) {
-      throw new Error("Id is required");
+    if (this.id.length === 0) {
+      this.notification.addError({
+        context: "customer",
+        message: "Id is required"
+      })
     }
     if (this._name.length === 0) {
-      throw new Error("Name is required");
+      this.notification.addError({
+        context: "customer",
+        message: "Name is required"
+      })
+    }
+    if(this.notification.hasErrors()) {
+      throw new NotificationError(this.notification.errors)
     }
   }
 
@@ -66,10 +76,6 @@ export default class Customer {
     EventDispatcherFactory.getEventDispatcher().notify(event);
   }
 
-  get id(): string {
-    return this._id;
-  }
-
   get name(): string {
     return this._name;
   }
@@ -82,12 +88,9 @@ export default class Customer {
   get rewardPoints() : number {
     return this._rewardPoints;
   }
-  
-  
 
   public set Address(address : Address) {
     this._address = address;
   }
   
-
 }
