@@ -82,4 +82,43 @@ describe("E2E Customer testes", () => {
        
 
     })
+
+
+    it("Should list customers by XML", async () => {
+        const response = await request(app)
+            .post("/customer")
+            .send({
+                name: "customer 1",
+                address: {
+                    street: "customer address street",
+                    number: "customer address number",
+                    zip: "customer address zip",
+                    city: "customer address city",
+                }
+            })
+
+        expect(response.status).toBe(200)
+
+        const response2 = await request(app)
+            .post("/customer")
+            .send({
+                name: "customer 2",
+                address: {
+                    street: "customer address street",
+                    number: "customer address number",
+                    zip: "customer address zip",
+                    city: "customer address city",
+                }
+            })
+
+        expect(response2.status).toBe(200)
+
+        const responseXml = await request(app)
+            .get("/customer")
+            .set("Accept", "application/xml")
+            .send()
+
+        expect(responseXml.status).toBe(200)
+        expect(responseXml.text).toContain(`<?xml version="1.0" encoding="UTF-8"?>`)
+    })
 })
